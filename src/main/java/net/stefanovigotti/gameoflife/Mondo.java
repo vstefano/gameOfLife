@@ -49,15 +49,38 @@ public class Mondo {
 
         Cellula[][] nuovaGriglia = creaGriglia(griglia.length, griglia[0].length);
 
+        for(int i=0;i<griglia.length;i++ ) {
+            for (int j = 0; j < griglia[i].length; j++) {
+
+                if(getCountAliveVicine(i,j)==3){
+                   nuovaGriglia[i][j].resurrect();
+                }
+
+                RULE3_more_than_3_vicine_die(nuovaGriglia, i, j);
+            }
+        }
         griglia = nuovaGriglia;
+    }
+
+    private void RULE3_more_than_3_vicine_die(Cellula[][] nuovaGriglia, int i, int j) {
+        if(getCountAliveVicine(i,j)>3){
+            nuovaGriglia[i][j].die();
+        }
     }
 
 
     public int getCountAliveVicine(int x, int y) {
         int countVicine=0;
-        for(int i=x-1;i<=x+1;i++){
+        int xStart = x-1;
+        int xEnd = x+1;
+        for(int i=xStart;i<=xEnd;i++){
+            if( i < 0 || i >= griglia.length)
+                continue;
+
             for(int j=y-1;j<=y+1;j++){
-                //System.out.println("cell : " + i + " , " + j + " , = "+cellAt(i,j).isAlive());
+                if( j < 0 || j >= griglia[i].length)
+                    continue;
+
                 if(i==x && j==y){
                     continue;
                 }

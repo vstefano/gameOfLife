@@ -79,8 +79,7 @@ public class MondoTest {
     @Test
     public void test_CellAreNear_2(){
         Mondo mondo = mondoMorto_5x5();
-        mondo.cellAt(1,1).resurrect();
-        mondo.cellAt(1,3).resurrect();
+        two_distant_cells_resurrect(mondo);
 
         assertEquals(2,mondo.getCountAliveVicine(1,2));
 
@@ -101,45 +100,46 @@ public class MondoTest {
         assertFalse(mondo.allCellsAreDead());
     }
 
-    private void two_near_cell_resurrect(Mondo mondo) {
-        mondo.cellAt(0,0).resurrect();
-        mondo.cellAt(0,1).resurrect();
+
+    @Test
+    public void invalidCellsOnVicineCounter(){
+        Mondo mondo = mondoMorto_5x5();
+        assertEquals(0,mondo.getCountAliveVicine(0,0));
     }
 
     @Test
-    public void RULE2_mondo_with_trhee_cell_near_after_1_step_is_not_dead(){
+    public void invalidCellsOnVicineCounter_2(){
         Mondo mondo = mondoMorto_5x5();
-        two_near_cell_resurrect(mondo);
+        assertEquals(0,mondo.getCountAliveVicine(4,4));
+    }
+
+    @Test
+    public void RULE2_mondo_with_three_cell_near_after_1_step_is_not_dead(){
+        Mondo mondo = mondoMorto_5x5();
+
+        int x = 1;
+        int y = 1;
+        three_near_cell_resurrect(mondo, x, y);
         assertFalse(mondo.allCellsAreDead()); // ensure is not dead world
 
         mondo.avanti();
 
-        mondo.cellAt(1,1).resurrect();
-        two_near_cell_resurrect(mondo);
-        mondo.cellAt(1,0).resurrect();
-        if(mondo.getCountAliveVicine(1,1)==3)
-            mondo.cellAt(1,1).isAlive();
-        assertFalse(mondo.allCellsAreDead());
-    }
+        assertTrue(mondo.cellAt(x,y).isAlive());
 
+    }
 
     @Test
     public void RULE3_cell_with_more_that_trhee_cell_near_dead_for_overpopulation(){
         Mondo mondo = mondoMorto_5x5();
-        two_near_cell_resurrect(mondo);
+        int x = 1;
+        int y = 1;
+        resurrect_four_near_cells_(mondo,x,y);
         assertFalse(mondo.allCellsAreDead()); // ensure is not dead world
 
         mondo.avanti();
 
-        mondo.cellAt(1,1).resurrect();
-        two_near_cell_resurrect(mondo);
-        mondo.cellAt(1,0).resurrect();
-        mondo.cellAt(0,2).resurrect();
-        if(mondo.getCountAliveVicine(1,1)>3)
-            mondo.cellAt(1,1).die();
-        assertFalse(mondo.cellAt(1,1).isAlive());
+        assertFalse(mondo.cellAt(x,y).isAlive());
     }
-
 
     @Test
     public void RULE4_dead_cell_with_exactly_three_live_cell_near_resurrect(){
@@ -157,25 +157,34 @@ public class MondoTest {
 
     }
 
+    private void resurrect_four_near_cells_(Mondo mondo,int x , int y) {
+        mondo.cellAt(x,y).resurrect();
+
+        mondo.cellAt(x-1,y-1).resurrect();
+        mondo.cellAt(x-1,y).resurrect();
+
+        mondo.cellAt(x,y-1).resurrect();
+        mondo.cellAt(x-1,y+1).resurrect();
+    }
 
 
+    private void two_distant_cells_resurrect(Mondo mondo) {
+        mondo.cellAt(1,1).resurrect();
+        mondo.cellAt(1,3).resurrect();
+    }
 
 
+    private void two_near_cell_resurrect(Mondo mondo) {
+        mondo.cellAt(0,0).resurrect();
+        mondo.cellAt(0,1).resurrect();
+    }
 
 
-
-
-
-
-//
-//    @Test public void mondo_stores_cells_at_given_cordinates(){
-//        Mondo mondo = mondoMorto_5x5();
-//        Cellula c = new Cellula();
-//        c.resurrect();
-//        int x = 3;
-//        int y = 3;
-//        mondo.storeCell(c,x,y);
-//    }
+    private void three_near_cell_resurrect(Mondo mondo,int x,int y) {
+        mondo.cellAt(x-1,y-1).resurrect();
+        mondo.cellAt(x-1,y).resurrect();
+        mondo.cellAt(x,y-1).resurrect();
+    }
 
 
     private Mondo mondoMorto_5x5() {
