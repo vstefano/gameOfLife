@@ -67,8 +67,6 @@ public class Mondo {
 
             }
         }
-
-
         return countVicine;
     }
 }

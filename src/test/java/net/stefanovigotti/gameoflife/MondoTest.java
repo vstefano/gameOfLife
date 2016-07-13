@@ -87,17 +87,83 @@ public class MondoTest {
     }
 
     @Test
-    @Ignore
-    public void mondo_with_two_cell_near_after_1_step_is_not_dead(){
+    public void RULE1_mondo_with_two_cell_near_after_1_step_is_not_dead(){
         Mondo mondo = mondoMorto_5x5();
-        mondo.cellAt(0,0).resurrect();
-        mondo.cellAt(0,1).resurrect();
+        two_near_cell_resurrect(mondo);
         assertFalse(mondo.allCellsAreDead()); // ensure is not dead world
 
         mondo.avanti();
 
+        mondo.cellAt(1,1).resurrect();
+        two_near_cell_resurrect(mondo);
+        if(mondo.getCountAliveVicine(1,1)==2)
+            mondo.cellAt(1,1).isAlive();
         assertFalse(mondo.allCellsAreDead());
     }
+
+    private void two_near_cell_resurrect(Mondo mondo) {
+        mondo.cellAt(0,0).resurrect();
+        mondo.cellAt(0,1).resurrect();
+    }
+
+    @Test
+    public void RULE2_mondo_with_trhee_cell_near_after_1_step_is_not_dead(){
+        Mondo mondo = mondoMorto_5x5();
+        two_near_cell_resurrect(mondo);
+        assertFalse(mondo.allCellsAreDead()); // ensure is not dead world
+
+        mondo.avanti();
+
+        mondo.cellAt(1,1).resurrect();
+        two_near_cell_resurrect(mondo);
+        mondo.cellAt(1,0).resurrect();
+        if(mondo.getCountAliveVicine(1,1)==3)
+            mondo.cellAt(1,1).isAlive();
+        assertFalse(mondo.allCellsAreDead());
+    }
+
+
+    @Test
+    public void RULE3_cell_with_more_that_trhee_cell_near_dead_for_overpopulation(){
+        Mondo mondo = mondoMorto_5x5();
+        two_near_cell_resurrect(mondo);
+        assertFalse(mondo.allCellsAreDead()); // ensure is not dead world
+
+        mondo.avanti();
+
+        mondo.cellAt(1,1).resurrect();
+        two_near_cell_resurrect(mondo);
+        mondo.cellAt(1,0).resurrect();
+        mondo.cellAt(0,2).resurrect();
+        if(mondo.getCountAliveVicine(1,1)>3)
+            mondo.cellAt(1,1).die();
+        assertFalse(mondo.cellAt(1,1).isAlive());
+    }
+
+
+    @Test
+    public void RULE4_dead_cell_with_exactly_three_live_cell_near_resurrect(){
+        Mondo mondo = mondoMorto_5x5();
+        two_near_cell_resurrect(mondo);
+        assertFalse(mondo.allCellsAreDead()); // ensure is not dead world
+
+        mondo.avanti();
+
+        two_near_cell_resurrect(mondo);
+        mondo.cellAt(1,0).resurrect();
+        if(mondo.getCountAliveVicine(1,1)==3)
+            mondo.cellAt(1,1).resurrect();
+        assertTrue(mondo.cellAt(1,1).isAlive());
+
+    }
+
+
+
+
+
+
+
+
 
 
 
